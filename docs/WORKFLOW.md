@@ -1,6 +1,6 @@
-# Workflow chung
+# Quy trình làm việc chung
 
-## Một task đi qua các trạng thái
+## Vòng đời của một task
 
 ```text
 TODO → DOING → REVIEW → DONE
@@ -8,36 +8,60 @@ TODO → DOING → REVIEW → DONE
 ```
 
 - `TODO`: chưa bắt đầu.
-- `DOING`: owner đang thực hiện.
+- `DOING`: người phụ trách đang thực hiện.
 - `REVIEW`: đã có deliverable, chờ kiểm tra/tích hợp.
 - `DONE`: đạt Acceptance Criteria và đã tích hợp ổn.
-- `BLOCKED`: không thể tiếp tục vì dependency hoặc blocker cụ thể; phải ghi lý do ở Notes.
+- `BLOCKED`: chưa thể tiếp tục do phụ thuộc hoặc blocker cụ thể; phải ghi rõ lý do ở cột Notes.
+
+Task và trạng thái được quản lý ở tab `TASKS` của Google Sheet, không quản lý bằng GitHub Issues.
 
 ## Branch
 
 Mỗi task tạo một branch từ `main`:
 
 ```text
-t<task-id>-<short-name>
+t<task-id>-<ten-ngan>
 ```
 
-Không dùng branch cá nhân sống lâu. Không phát triển trực tiếp trên `main`.
+Ví dụ:
+
+```text
+t01-crawler-baseline
+t03-search-ui
+t04-lucene-backend
+t06-vietnamese-analysis
+t12-evaluation-qa
+```
+
+Không dùng branch cá nhân sống lâu. Không phát triển feature trực tiếp trên `main`.
 
 ## Commit
 
-Commit ngắn, mô tả đúng thay đổi. Khuyến nghị:
+Commit ngắn và mô tả đúng thay đổi. Ví dụ:
 
 ```text
-crawler: extract HUST article content
-backend: add Lucene index builder
-frontend: add search result list
-nlp: add tokenizer benchmark fixtures
+crawler: bóc tách nội dung bài viết HUST
+backend: thêm Lucene index builder
+frontend: thêm danh sách kết quả tìm kiếm
+nlp: thêm dữ liệu benchmark tokenizer
+evaluation: thêm bộ truy vấn đánh giá
 ```
 
-Không cần ép conventional commits ở giai đoạn này.
+Không bắt buộc conventional commits ở giai đoạn hiện tại.
 
-## Contract
+## Contract chung
 
-- FE/BE đọc `API CONTRACT` trên Google Sheet.
-- Crawler/NLP/BE đọc `DATA CONTRACT` trên Google Sheet.
-- Thay đổi contract ảnh hưởng module khác phải cập nhật `DECISIONS` và Sheet trước khi coi task là DONE.
+- Frontend/Backend đọc tab `API CONTRACT`.
+- Crawler/NLP/Backend đọc tab `DATA CONTRACT`.
+- Thông tin kết nối nằm trong tab `CONNECTION`.
+- Thay đổi contract ảnh hưởng module khác phải cập nhật `DECISIONS` và Sheet trước khi coi task là `DONE`.
+
+## Trước khi chuyển sang REVIEW
+
+Người làm task phải tự kiểm tra tối thiểu:
+
+1. Chạy được module hoặc test liên quan.
+2. Không commit secret hay file runtime lớn.
+3. Không phá CI hiện có.
+4. Cập nhật Deliverable/Link trên Sheet.
+5. Ghi blocker hoặc giới hạn còn lại vào Notes nếu có.

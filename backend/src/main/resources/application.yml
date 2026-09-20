@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: kinh-lup-backend
+
+server:
+  port: ${BACKEND_PORT:8080}

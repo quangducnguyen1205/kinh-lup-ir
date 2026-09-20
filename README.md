@@ -26,7 +26,7 @@ Cơ chế cập nhật chính là crawl/rà soát **định kỳ**. Cập nhật
 
 Task, API Contract, Data Contract, Connection và các quyết định kiến trúc được quản lý tại Google Sheet của nhóm:
 
-https://docs.google.com/spreadsheets/d/1Vq9XXLyeHBuoYnM28nu2P6et_BKhn4QEjnQ3sMuiOQE/edit
+https://docs.google.com/spreadsheets/d/16iiLZQUk4thjs51NRptEC9BiBmRKls5_om0LWwEa1Ig/edit
 
 **Google Sheet là nguồn chuẩn cho việc giao task và contract. GitHub dùng để quản lý code. Hiện tại nhóm không dùng GitHub Issues.**
 

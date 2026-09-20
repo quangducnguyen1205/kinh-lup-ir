@@ -16,7 +16,7 @@ Mỗi người cần:
 
 Google Sheet:
 
-https://docs.google.com/spreadsheets/d/1Vq9XXLyeHBuoYnM28nu2P6et_BKhn4QEjnQ3sMuiOQE/edit
+https://docs.google.com/spreadsheets/d/16iiLZQUk4thjs51NRptEC9BiBmRKls5_om0LWwEa1Ig/edit
 
 ## Đức — Crawler / Lead
 

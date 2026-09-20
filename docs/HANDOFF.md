@@ -47,7 +47,7 @@ t02-content-update
 
 Mục tiêu: phân biệt URL mới / nội dung đổi / nội dung không đổi theo `content_hash`.
 
-## Chính — Frontend
+## Sơn — Frontend
 
 ### T03 — Search UI baseline
 
@@ -66,7 +66,7 @@ Mục tiêu: search box, loading/error state, danh sách kết quả, pagination
 
 Có thể dùng mock response đúng contract khi backend chưa xong.
 
-## Sơn — Backend / Search
+## Chính — Backend / Search
 
 ### T04 — Backend API + Lucene baseline
 
@@ -115,7 +115,7 @@ Mục tiêu: benchmark VnCoreNLP / Underthesea / PyVi, chốt pipeline normalize
 
 ### T07 — Integrate Vietnamese analyzer
 
-Làm cùng Sơn sau khi T04 + T06 đủ điều kiện.
+Làm cùng Chính sau khi T04 + T06 đủ điều kiện.
 
 ## Quốc Anh — Evaluation / QA
 

@@ -1,6 +1,6 @@
 # Backend / Search
 
-**Người phụ trách setup:** Sơn  
+**Người phụ trách setup:** Chính  
 **Task khởi đầu:** T04 — Backend API + Lucene baseline; T05 — Tika extraction baseline
 
 Công nghệ: Java + Spring Boot + Apache Lucene + Apache Tika.

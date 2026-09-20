@@ -13,11 +13,22 @@ Frontend (React) ─X→ PostgreSQL
 Frontend (React) ─→ Backend API
 ```
 
-Lucene index **không** được coi là shared database. Nó là derived data và phải rebuild được từ PostgreSQL.
+Lucene index **không** phải shared database. Nó là derived data và phải rebuild được từ PostgreSQL.
 
-## Quy tắc kết nối
+## Thông tin kết nối dùng chung
 
-### Local development
+Lead đã quyết định tab **`CONNECTION`** trong Google Sheet là nơi tập trung thông tin kết nối nội bộ cho nhóm.
+
+- Đức và Sơn lấy DB connection info từ tab `CONNECTION`.
+- Nam chỉ cần DB credential khi task integration thực sự cần.
+- Chính không cần DB credential; frontend chỉ gọi Backend API.
+- Credential có thể nằm trên Sheet nội bộ theo quyết định của nhóm, nhưng **không được commit lên GitHub**.
+
+Google Sheet:
+
+https://docs.google.com/spreadsheets/d/1Vq9XXLyeHBuoYnM28nu2P6et_BKhn4QEjnQ3sMuiOQE/edit
+
+## Local development
 
 Ưu tiên connection string do Supabase cung cấp ở:
 
@@ -25,19 +36,19 @@ Lucene index **không** được coi là shared database. Nó là derived data v
 Project → Connect → Shared Pooler → Session mode
 ```
 
-Lý do: phù hợp cho laptop/mạng IPv4 và client chạy lâu như Spring Boot hoặc crawler.
+Session mode phù hợp cho laptop/mạng IPv4 và client persistent như Spring Boot hoặc crawler.
 
-Không tự ghép hostname/project ref. Copy nguyên host, port và username do Supabase hiển thị.
+Không tự đoán pooler host/username. Copy nguyên thông tin từ Supabase Connect và ghi vào tab `CONNECTION`.
 
 ### Environment variables
 
-Crawler dùng:
+Crawler:
 
 ```env
 DATABASE_URL=
 ```
 
-Backend dùng:
+Backend:
 
 ```env
 SPRING_DATASOURCE_URL=
@@ -45,30 +56,26 @@ SPRING_DATASOURCE_USERNAME=
 SPRING_DATASOURCE_PASSWORD=
 ```
 
-Credential thật chỉ nằm trong file `.env` local hoặc secret store của môi trường chạy.
+Mỗi người copy giá trị từ Sheet sang `.env` local. `.env` vẫn bị ignore và không commit.
 
-**Không commit `.env`, password, service-role key, connection string thật hoặc database dump vào Git.**
+## Project hiện tại
 
-## Access model v0
-
-- Đức: cần DB connection cho crawler/ingestion.
-- Sơn: cần DB connection cho backend/indexing.
-- Nam: chưa cần DB credential để làm research tokenizer ở bước đầu.
-- Chính: không cần DB credential; frontend chỉ dùng Backend API.
-
-Nếu sau này Nam cần integration trực tiếp với dữ liệu thật, lead cấp credential private theo nhu cầu.
+- Supabase project: `kinh-lup-ir`
+- Project ref: `uxhzigjvjoygcqadvydo`
+- Region: `ap-southeast-1` (Singapore)
+- Direct DB host: `db.uxhzigjvjoygcqadvydo.supabase.co`
+- Database: `postgres`
+- Direct port: `5432`
+- Cost: Free / `$0` mỗi tháng tại thời điểm tạo
 
 ## Supabase features chưa cần dùng
 
 BTL hiện chỉ cần PostgreSQL. Không cần phụ thuộc vào Auth, Realtime, Edge Functions hoặc Data API từ frontend.
 
-Có thể cân nhắc Storage sau này nếu nhóm quyết định lưu file PDF/DOCX gốc trên cloud.
+Có thể cân nhắc Storage sau này nếu nhóm muốn lưu file PDF/DOCX gốc trên cloud.
 
-## Step 3 hoàn thành khi
+## Step 3
 
-- Có Supabase project chung.
-- Lead lưu credential ngoài Git.
-- Đức và Sơn test được kết nối từ máy/dev environment.
-- Connection contract trong `.env.example` được giữ ổn định.
+Project đã được tạo và SQL connectivity đã verify. DB password + exact Shared Pooler Session connection string cần được lead copy từ Supabase Dashboard → Connect vào tab `CONNECTION` một lần.
 
-Schema bảng và migration thuộc **Step 4**, không nằm trong Step 3.
+Schema bảng và migration thuộc **Step 4**.

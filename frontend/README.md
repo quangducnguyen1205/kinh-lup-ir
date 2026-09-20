@@ -1,6 +1,6 @@
 # Frontend — giao diện tìm kiếm
 
-**Người phụ trách setup:** Chính  
+**Người phụ trách setup:** Sơn  
 **Task khởi đầu:** T03 — Search UI baseline
 
 Công nghệ: React + Vite.

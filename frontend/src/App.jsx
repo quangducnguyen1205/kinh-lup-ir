@@ -7,7 +7,7 @@ export default function App() {
         <p className="eyebrow">IT4863 · Kính Lúp</p>
         <h1>Frontend skeleton is running.</h1>
         <p>
-          Đây chỉ là shell kỹ thuật để Chính bắt đầu T03. Search box, result list,
+          Đây chỉ là shell kỹ thuật để Sơn bắt đầu T03. Search box, result list,
           pagination và document detail chưa được triển khai ở bước setup.
         </p>
         <dl>

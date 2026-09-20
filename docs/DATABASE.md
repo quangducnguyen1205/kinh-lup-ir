@@ -19,9 +19,9 @@ Lucene index **không** phải CSDL dùng chung. Nó là dữ liệu dẫn xuấ
 
 Tab **`CONNECTION`** trong Google Sheet là nơi tập trung thông tin kết nối nội bộ của nhóm.
 
-- Đức và Sơn cần thông tin kết nối DB cho crawler/backend.
+- Đức và Chính cần thông tin kết nối DB cho crawler/backend.
 - Nam chỉ cần khi task tích hợp thực sự cần truy cập dữ liệu thật.
-- Chính không cần DB credential; frontend chỉ gọi Backend API.
+- Sơn không cần DB credential; frontend chỉ gọi Backend API.
 - Theo quyết định của lead, credential có thể lưu trên Sheet nội bộ nhưng **không được commit lên GitHub**.
 
 Google Sheet:

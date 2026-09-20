@@ -117,9 +117,7 @@ Mục tiêu: benchmark VnCoreNLP / Underthesea / PyVi, chốt pipeline normalize
 
 Làm cùng Sơn sau khi T04 + T06 đủ điều kiện.
 
-## Thành viên mới — Evaluation / QA
-
-> Tên đang để placeholder `Thành viên mới` cho tới khi lead cập nhật tên chính thức trên Sheet.
+## Quốc Anh — Evaluation / QA
 
 ### T12 — Bộ truy vấn đánh giá + QA baseline
 

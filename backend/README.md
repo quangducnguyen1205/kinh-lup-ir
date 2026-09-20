@@ -1,10 +1,25 @@
 # Backend / Search
 
-**Setup owner:** Sơn  
+**Người phụ trách setup:** Sơn  
 **Task khởi đầu:** T04 — Backend API + Lucene baseline; T05 — Tika extraction baseline
 
-Stack: Java + Spring Boot + Apache Lucene + Apache Tika.
+Công nghệ: Java + Spring Boot + Apache Lucene + Apache Tika.
 
-PostgreSQL là source of truth; Lucene index là derived data và phải rebuild được từ DB.
+## Nguyên tắc
 
-Các endpoint và response shape phải bám tab `API CONTRACT` trong Google Sheet.
+- PostgreSQL là nguồn dữ liệu chuẩn.
+- Lucene index là dữ liệu dẫn xuất và phải rebuild được từ PostgreSQL.
+- Endpoint và response phải bám tab `API CONTRACT`.
+- Cách đọc/ghi dữ liệu phải bám tab `DATA CONTRACT`.
+- Frontend không được phụ thuộc trực tiếp vào DB.
+
+## Skeleton hiện có
+
+Step 5 mới cung cấp:
+
+- Spring Boot application chạy được;
+- `GET /api/health`;
+- dependency Lucene + Tika;
+- test kiểm tra Spring context.
+
+Build Lucene index, search API, document detail và Tika extraction vẫn thuộc T04/T05.

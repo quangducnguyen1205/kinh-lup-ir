@@ -1,8 +1,8 @@
-# Shared database — Supabase PostgreSQL
+# CSDL dùng chung — Supabase PostgreSQL
 
 ## Mục tiêu
 
-Nhóm dùng **một Supabase project chung** làm PostgreSQL source of truth cho dữ liệu đã crawl.
+Nhóm dùng **một Supabase project chung** làm nguồn dữ liệu chuẩn cho dữ liệu đã crawl.
 
 ```text
 Crawler (Scrapy) ─┐
@@ -13,34 +13,34 @@ Frontend (React) ─X→ PostgreSQL
 Frontend (React) ─→ Backend API
 ```
 
-Lucene index **không** phải shared database. Nó là derived data và phải rebuild được từ PostgreSQL.
+Lucene index **không** phải CSDL dùng chung. Nó là dữ liệu dẫn xuất và phải rebuild được từ PostgreSQL.
 
 ## Thông tin kết nối dùng chung
 
-Lead đã quyết định tab **`CONNECTION`** trong Google Sheet là nơi tập trung thông tin kết nối nội bộ cho nhóm.
+Tab **`CONNECTION`** trong Google Sheet là nơi tập trung thông tin kết nối nội bộ của nhóm.
 
-- Đức và Sơn lấy DB connection info từ tab `CONNECTION`.
-- Nam chỉ cần DB credential khi task integration thực sự cần.
+- Đức và Sơn cần thông tin kết nối DB cho crawler/backend.
+- Nam chỉ cần khi task tích hợp thực sự cần truy cập dữ liệu thật.
 - Chính không cần DB credential; frontend chỉ gọi Backend API.
-- Credential có thể nằm trên Sheet nội bộ theo quyết định của nhóm, nhưng **không được commit lên GitHub**.
+- Theo quyết định của lead, credential có thể lưu trên Sheet nội bộ nhưng **không được commit lên GitHub**.
 
 Google Sheet:
 
 https://docs.google.com/spreadsheets/d/1Vq9XXLyeHBuoYnM28nu2P6et_BKhn4QEjnQ3sMuiOQE/edit
 
-## Local development
+## Kết nối khi phát triển local
 
-Ưu tiên connection string do Supabase cung cấp ở:
+Ưu tiên connection string Supabase cung cấp tại:
 
 ```text
 Project → Connect → Shared Pooler → Session mode
 ```
 
-Session mode phù hợp cho laptop/mạng IPv4 và client persistent như Spring Boot hoặc crawler.
+Session mode phù hợp cho laptop/mạng IPv4 và các client giữ kết nối lâu như Spring Boot hoặc crawler.
 
 Không tự đoán pooler host/username. Copy nguyên thông tin từ Supabase Connect và ghi vào tab `CONNECTION`.
 
-### Environment variables
+### Biến môi trường
 
 Crawler:
 
@@ -56,7 +56,7 @@ SPRING_DATASOURCE_USERNAME=
 SPRING_DATASOURCE_PASSWORD=
 ```
 
-Mỗi người copy giá trị từ Sheet sang `.env` local. `.env` vẫn bị ignore và không commit.
+Mỗi người copy giá trị từ Sheet sang `.env` local. `.env` vẫn phải nằm ngoài Git.
 
 ## Project hiện tại
 
@@ -66,16 +66,21 @@ Mỗi người copy giá trị từ Sheet sang `.env` local. `.env` vẫn bị i
 - Direct DB host: `db.uxhzigjvjoygcqadvydo.supabase.co`
 - Database: `postgres`
 - Direct port: `5432`
-- Cost: Free / `$0` mỗi tháng tại thời điểm tạo
+- Chi phí khi tạo: Free / `$0` mỗi tháng
 
-## Supabase features chưa cần dùng
+## Các tính năng Supabase hiện chưa cần
 
-BTL hiện chỉ cần PostgreSQL. Không cần phụ thuộc vào Auth, Realtime, Edge Functions hoặc Data API từ frontend.
+BTL hiện chỉ cần PostgreSQL. Chưa cần phụ thuộc vào:
 
-Có thể cân nhắc Storage sau này nếu nhóm muốn lưu file PDF/DOCX gốc trên cloud.
+- Auth
+- Realtime
+- Edge Functions
+- Data API trực tiếp từ frontend
 
-## Step 3
+Có thể cân nhắc Supabase Storage sau này nếu nhóm muốn lưu file PDF/DOCX gốc trên cloud.
 
-Project đã được tạo và SQL connectivity đã verify. DB password + exact Shared Pooler Session connection string cần được lead copy từ Supabase Dashboard → Connect vào tab `CONNECTION` một lần.
+## Trạng thái
 
-Schema bảng và migration thuộc **Step 4**.
+Project đã được tạo và kết nối SQL đã được kiểm tra thành công. DB password và Session Pooler connection string chính xác sẽ được lead bổ sung vào tab `CONNECTION`.
+
+Schema bảng hiện tại xem tại `docs/DB_SCHEMA.md`.

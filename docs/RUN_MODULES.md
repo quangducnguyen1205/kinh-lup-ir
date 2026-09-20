@@ -1,13 +1,13 @@
-# Run the module skeletons
+# Cách chạy các module
 
-Step 5 only creates **runnable technical shells**. It deliberately does not implement T01/T03/T04/T05/T06.
+Step 5 chỉ tạo **khung kỹ thuật chạy được**, cố ý chưa triển khai phần feature của T01/T03/T04/T05/T06.
 
-## Prerequisites
+## Yêu cầu môi trường
 
 - Node.js 22+
 - Java 21
 - Maven 3.9+
-- Python 3.11+ (3.13 is fine)
+- Python 3.11+ (Python 3.13 dùng được)
 
 ## Frontend
 
@@ -17,9 +17,9 @@ npm install
 npm run dev
 ```
 
-Expected: Vite prints a local URL and the browser renders the Kính Lúp skeleton page.
+Kết quả mong đợi: Vite in ra local URL và trình duyệt hiển thị trang skeleton Kính Lúp.
 
-Production build check:
+Kiểm tra production build:
 
 ```bash
 npm run build
@@ -32,7 +32,7 @@ cd backend
 mvn spring-boot:run
 ```
 
-Check:
+Kiểm tra:
 
 ```text
 GET http://localhost:8080/api/health
@@ -43,7 +43,7 @@ GET http://localhost:8080/api/health
 }
 ```
 
-The skeleton already pins Lucene and Tika libraries, but does not create an index or parse documents yet.
+Skeleton đã khai báo Lucene và Tika nhưng **chưa** tạo index, search hay bóc tách tài liệu.
 
 ## Crawler
 
@@ -56,27 +56,27 @@ pip install -r requirements.txt
 scrapy list
 ```
 
-Expected: `smoke`.
+Kết quả mong đợi: thấy spider `smoke`.
 
-Optional infrastructure test:
+Có thể chạy smoke test hạ tầng:
 
 ```bash
 scrapy crawl smoke -O smoke.json
 ```
 
-The `smoke` spider uses example.com on purpose. HUST crawling and PostgreSQL ingestion belong to T01/T02.
+Spider `smoke` cố ý dùng example.com. Crawl HUST và ghi PostgreSQL thuộc T01/T02.
 
-## Vietnamese analysis research
+## Nghiên cứu xử lý tiếng Việt
 
 ```bash
 cd research/vietnamese-analysis
 python benchmark.py
 ```
 
-Expected: a message telling the T06 owner to add the real benchmark.
+Kết quả mong đợi: chương trình báo harness đã sẵn sàng và yêu cầu owner T06 bổ sung benchmark thật.
 
-## Shared database
+## CSDL dùng chung
 
-The module skeletons do not require database credentials to start. When crawler/backend tasks begin, copy the required values from the Google Sheet `CONNECTION` tab into a local `.env`.
+Các skeleton không cần credential DB để khởi động. Khi bắt đầu task crawler/backend, copy giá trị cần thiết từ tab `CONNECTION` trên Google Sheet vào `.env` local.
 
-Never commit the real `.env`.
+**Không commit `.env` thật lên Git.**

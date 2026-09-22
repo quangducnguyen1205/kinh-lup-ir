@@ -16,11 +16,28 @@ body {
   min-height: 100vh;
 }
 
+.app-header {
+  padding: 20px 32px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.app-header__brand {
+  color: #0f172a;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
 .app-shell {
   min-height: 100vh;
   display: grid;
   place-items: center;
   padding: 32px;
+}
+
+.app-shell > .card {
+  margin-block: 32px;
 }
 
 .card {

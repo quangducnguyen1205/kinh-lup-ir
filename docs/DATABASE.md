@@ -30,15 +30,18 @@ https://docs.google.com/spreadsheets/d/16iiLZQUk4thjs51NRptEC9BiBmRKls5_om0LWwEa
 
 ## Kết nối khi phát triển local
 
-Ưu tiên connection string Supabase cung cấp tại:
+Nhóm thống nhất dùng **một connection canonical duy nhất**: Supabase Shared Pooler — Session mode.
 
 ```text
-Project → Connect → Shared Pooler → Session mode
+Host:     aws-0-ap-southeast-1.pooler.supabase.com
+Port:     5432
+Database: postgres
+Username: postgres.uxhzigjvjoygcqadvydo
+Password: xem tab CONNECTION
+SSL:      require
 ```
 
-Session mode phù hợp cho laptop/mạng IPv4 và các client giữ kết nối lâu như Spring Boot hoặc crawler.
-
-Không tự đoán pooler host/username. Copy nguyên thông tin từ Supabase Connect và ghi vào tab `CONNECTION`.
+Connection này dùng chung cho DataGrip, crawler và backend. Direct PostgreSQL endpoint không dùng trong workflow của nhóm để tránh hai cách kết nối song song gây nhầm lẫn.
 
 ### Biến môi trường
 
@@ -63,9 +66,10 @@ Mỗi người copy giá trị từ Sheet sang `.env` local. `.env` vẫn phải
 - Supabase project: `kinh-lup-ir`
 - Project ref: `uxhzigjvjoygcqadvydo`
 - Region: `ap-southeast-1` (Singapore)
-- Direct DB host: `db.uxhzigjvjoygcqadvydo.supabase.co`
+- Canonical DB host: `aws-0-ap-southeast-1.pooler.supabase.com`
 - Database: `postgres`
-- Direct port: `5432`
+- Port: `5432`
+- Username: `postgres.uxhzigjvjoygcqadvydo`
 - Chi phí khi tạo: Free / `$0` mỗi tháng
 
 ## Các tính năng Supabase hiện chưa cần
@@ -81,6 +85,6 @@ Có thể cân nhắc Supabase Storage sau này nếu nhóm muốn lưu file PDF
 
 ## Trạng thái
 
-Project đã được tạo và kết nối SQL đã được kiểm tra thành công. DB password và Session Pooler connection string chính xác sẽ được lead bổ sung vào tab `CONNECTION`.
+Project đã được tạo và Shared Pooler Session connection đã được kiểm tra thành công bằng DataGrip. Credential/connection string đầy đủ nằm ở tab `CONNECTION`; không đưa password vào Git.
 
 Schema bảng hiện tại xem tại `docs/DB_SCHEMA.md`.

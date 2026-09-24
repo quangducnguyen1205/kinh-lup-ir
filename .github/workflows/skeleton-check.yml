@@ -45,5 +45,7 @@ jobs:
           cache-dependency-path: crawler/requirements.txt
       - run: pip install -r crawler/requirements.txt
       - run: cd crawler && scrapy list | grep -q '^smoke$'
+      - run: cd crawler && scrapy list | grep -q '^hust$'
+      - run: cd crawler && python -m pytest -q
       - run: python -m compileall crawler/kinhlup_crawler research/vietnamese-analysis
       - run: python research/vietnamese-analysis/benchmark.py

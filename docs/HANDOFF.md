@@ -165,4 +165,4 @@ Không merge trực tiếp theo cảm tính. Mỗi task chỉ có **một PR**. 
 4. CI pass;
 5. lead/reviewer xác nhận đủ điều kiện.
 
-Khi merge ưu tiên **Squash and merge** để `main` có một commit tương ứng với task, sau đó xóa branch task.
+Khi merge ưu tiên **Squash and merge** để `main` có một commit tương ứng với task. **Giữ lại branch task sau merge** để lưu lịch sử commit chi tiết của quá trình làm task.

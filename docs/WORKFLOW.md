@@ -37,7 +37,7 @@ Toàn bộ commit trong quá trình làm task được đẩy lên **chính bran
 
 Khi task đủ điều kiện review, tạo **đúng một Pull Request** từ branch task vào `main`. Nếu review yêu cầu sửa, tiếp tục commit/push lên branch cũ; PR tự cập nhật. Không mở PR thứ hai cho cùng task.
 
-Khi merge task, ưu tiên **Squash and merge** để `main` có một commit gọn tương ứng với một task. Sau khi merge xong, xóa branch task trên remote.
+Khi merge task, ưu tiên **Squash and merge** để `main` có một commit gọn tương ứng với một task. **Giữ lại branch task trên remote sau khi merge** để lưu toàn bộ lịch sử commit quá trình của task.
 
 ## `main`
 
@@ -82,4 +82,4 @@ Người làm task phải tự kiểm tra tối thiểu:
 6. Push toàn bộ commit lên branch của task.
 7. Mở **một PR duy nhất** từ branch task vào `main`.
 
-Sau khi review/CI đạt yêu cầu, PR được squash-merge, task chuyển `DONE` và branch task được xóa.
+Sau khi review/CI đạt yêu cầu, PR được squash-merge và task chuyển `DONE`. Branch task **được giữ lại** để lưu vết chi tiết các commit của quá trình thực hiện.

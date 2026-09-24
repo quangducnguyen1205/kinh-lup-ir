@@ -67,7 +67,7 @@ git checkout -b t01-crawler-baseline
 6. Trước khi bàn giao, tự chạy/test phần mình phụ trách và cập nhật `Deliverable / Link` + `Notes` trên Sheet.
 7. Chuyển Status thành `REVIEW` và mở **một Pull Request duy nhất** từ branch task vào `main`.
 8. Nếu review yêu cầu sửa, tiếp tục commit lên branch cũ; không mở PR mới.
-9. Khi đạt yêu cầu, **Squash and merge**, chuyển task sang `DONE` và xóa branch task.
+9. Khi đạt yêu cầu, **Squash and merge** và chuyển task sang `DONE`. **Không xóa branch task**; branch được giữ lại để lưu lịch sử commit chi tiết của task.
 
 ### Quy ước branch
 

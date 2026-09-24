@@ -1,6 +1,6 @@
 # Cách chạy các module
 
-Step 5 chỉ tạo **khung kỹ thuật chạy được**, cố ý chưa triển khai phần feature của T01/T03/T04/T05/T06.
+Step 5 tạo **khung kỹ thuật chạy được** cho mọi module. Tính năng được bổ sung dần theo task; hiện crawler đã có spider HUST của T01, các module khác vẫn ở mức skeleton.
 
 ## Yêu cầu môi trường
 
@@ -56,15 +56,22 @@ pip install -r requirements.txt
 scrapy list
 ```
 
-Kết quả mong đợi: thấy spider `smoke`.
+Kết quả mong đợi: thấy spider `hust` và `smoke`.
 
-Có thể chạy smoke test hạ tầng:
+Có thể chạy smoke test hạ tầng (example.com, không cần DB):
 
 ```bash
 scrapy crawl smoke -O smoke.json
 ```
 
-Spider `smoke` cố ý dùng example.com. Crawl HUST và ghi PostgreSQL thuộc T01/T02.
+Crawl HUST và ghi vào PostgreSQL (cần `DATABASE_URL` trong `.env` ở thư mục gốc):
+
+```bash
+CRAWLER_MAX_PAGES=20 scrapy crawl hust
+python -m pytest -q
+```
+
+Chi tiết cấu hình, dữ liệu được ghi và phạm vi T01 xem `crawler/README.md`.
 
 ## Nghiên cứu xử lý tiếng Việt
 

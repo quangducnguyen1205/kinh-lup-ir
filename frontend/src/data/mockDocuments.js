@@ -1,0 +1,36 @@
+const mockDocumentSeed = [
+  ['hoc-bong-ky-1-2026', 'Thông báo học bổng kỳ I năm học 2026–2027', 'Học bổng khuyến khích học tập và hồ sơ cần chuẩn bị.', '2026-08-25T00:00:00Z'],
+  ['tuyen-sinh-dai-hoc-2026', 'Thông tin tuyển sinh đại học năm 2026', 'Các mốc xét tuyển và hướng dẫn nhập học tại HUST.', '2026-06-12T00:00:00Z'],
+  ['lich-thi-cuoi-ky', 'Lịch thi cuối kỳ học kỳ 1', 'Sinh viên kiểm tra lịch thi, phòng thi và quy chế dự thi.', null],
+  ['dang-ky-hoc-phan', 'Hướng dẫn đăng ký học phần', 'Quy trình đăng ký học phần trên hệ thống đào tạo HUST.', '2026-08-10T00:00:00Z'],
+  ['ngay-hoi-viec-lam', 'Ngày hội việc làm Bách khoa', 'Doanh nghiệp tuyển dụng và hoạt động tư vấn nghề nghiệp.', '2026-04-18T00:00:00Z'],
+  ['nghien-cuu-khoa-hoc', 'Đăng ký đề tài nghiên cứu khoa học sinh viên', 'Mở đăng ký đề tài nghiên cứu khoa học năm học mới.', '2026-09-03T00:00:00Z'],
+  ['ky-tuc-xa-2026', 'Thông báo đăng ký ký túc xá', 'Hướng dẫn nộp hồ sơ và thời gian xác nhận chỗ ở.', '2026-07-28T00:00:00Z'],
+  ['chuong-trinh-trao-doi', 'Chương trình trao đổi sinh viên quốc tế', 'Cơ hội trao đổi tại các trường đối tác của HUST.', null],
+  ['cuoc-thi-sang-tao', 'Cuộc thi sáng tạo trẻ Bách khoa', 'Thể lệ và hạn đăng ký cuộc thi dành cho sinh viên.', '2026-03-05T00:00:00Z'],
+  ['bao-tri-cong-thong-tin', 'Bảo trì cổng thông tin đào tạo', 'Cổng thông tin tạm ngừng để nâng cấp hệ thống.', '2026-05-21T00:00:00Z'],
+  ['hoc-bong-doanh-nghiep', 'Học bổng doanh nghiệp dành cho sinh viên', 'Danh sách học bổng và tiêu chí xét chọn của doanh nghiệp.', '2026-02-14T00:00:00Z'],
+  ['tuan-sinh-hoat-cong-dan', 'Tuần sinh hoạt công dân đầu khóa', 'Lịch học, địa điểm và nội dung dành cho tân sinh viên.', '2026-08-30T00:00:00Z'],
+  ['hoi-thao-ai', 'Hội thảo trí tuệ nhân tạo', 'Các chuyên gia chia sẻ về ứng dụng AI trong kỹ thuật.', null],
+  ['van-bang-chung-chi', 'Hướng dẫn nhận văn bằng và chứng chỉ', 'Thời gian trả bằng, chứng chỉ tại Trường Đại học Bách khoa Hà Nội.', '2026-01-20T00:00:00Z'],
+  ['dao-tao-truc-tuyen', 'Tài liệu hướng dẫn học trực tuyến', 'Sinh viên sử dụng các công cụ học trực tuyến của HUST.', '2026-09-10T00:00:00Z'],
+  ['nghi-le-quoc-khanh', 'Lịch nghỉ lễ Quốc khánh', 'Thông báo lịch nghỉ và kế hoạch học bù tại HUST.', '2026-08-15T00:00:00Z'],
+  ['khao-sat-viec-lam', 'Khảo sát việc làm sau tốt nghiệp', 'Cựu sinh viên cung cấp thông tin việc làm cho nhà trường.', '2026-06-01T00:00:00Z'],
+  ['tuyen-dung-tro-giang', 'Tuyển dụng trợ giảng học kỳ mới', 'Thông tin vị trí trợ giảng và cách nộp hồ sơ.', '2026-07-04T00:00:00Z'],
+  ['thu-vien-so', 'Khai thác thư viện số HUST', 'Hướng dẫn tra cứu tài liệu và cơ sở dữ liệu học thuật.', null],
+  ['ho-tro-tam-ly', 'Dịch vụ hỗ trợ tâm lý cho sinh viên', 'Kênh tư vấn bảo mật và lịch hẹn hỗ trợ tại trường.', '2026-04-02T00:00:00Z'],
+  ['fallback-fields', null, null, '2026-03-19T00:00:00Z'],
+]
+
+/** @type {import('../api/types').DocumentDetail[]} */
+export const mockDocuments = mockDocumentSeed.map(([id, title, snippet, publishedAt], index) => ({
+  id,
+  title,
+  url: `https://example.hust.edu.vn/thong-bao/${id}`,
+  snippet,
+  score: Number((10 - index * 0.19).toFixed(2)),
+  contentType: 'text/html',
+  text: `${title || 'Thông tin từ HUST'}\n\n${snippet || 'Nội dung tài liệu đang được cập nhật.'}`,
+  publishedAt,
+  lastCrawledAt: `2026-09-${String((index % 20) + 1).padStart(2, '0')}T08:00:00Z`,
+}))

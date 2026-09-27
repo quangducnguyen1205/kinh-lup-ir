@@ -1,7 +1,17 @@
+import { useEffect, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import { searchDocuments } from '../api/searchApi'
+const PAGE_SIZE = 10
+const formatDate = (value) => value ? new Intl.DateTimeFormat('vi-VN',{dateStyle:'medium'}).format(new Date(value)) : 'Chưa cập nhật'
+function Result({ result }) { return <article className="result-card"><div className="result-top"><span>Tài liệu HUST</span><span>Điểm {Number(result.score || 0).toFixed(2)}</span></div><h2><Link to={`/documents/${encodeURIComponent(result.id)}`}>{result.title || 'Tài liệu chưa có tiêu đề'}</Link></h2><p>{result.snippet || 'Chưa có phần mô tả cho tài liệu này.'}</p><div className="result-meta"><span>{formatDate(result.publishedAt)}</span><a href={result.url} target="_blank" rel="noreferrer">Mở nguồn ↗</a></div></article> }
+function Pagination({ page, total, onChange }) { const pages = Math.ceil(total / PAGE_SIZE); return pages < 2 ? null : <nav className="pagination" aria-label="Phân trang kết quả"><button onClick={() => onChange(page - 1)} disabled={!page}>← Trước</button><span>Trang <strong>{page + 1}</strong> / {pages}</span><button onClick={() => onChange(page + 1)} disabled={page + 1 >= pages}>Sau →</button></nav> }
 export function SearchPage() {
-  return <section className="card" aria-labelledby="search-page-title">
-    <p className="eyebrow">Tìm kiếm tài liệu HUST</p>
-    <h1 id="search-page-title">Search UI đang được xây dựng</h1>
-    <p>Search box, kết quả và pagination sẽ được bổ sung ở các phase tiếp theo.</p>
-  </section>
+  const [params, setParams] = useSearchParams(), queryParam = params.get('q') || ''
+  const [input, setInput] = useState(queryParam), [query, setQuery] = useState(queryParam), [page, setPage] = useState(Number(params.get('page')) || 0), [state, setState] = useState({status: queryParam ? 'loading' : 'idle', data: null, error: null})
+  useEffect(() => { setInput(queryParam); setQuery(queryParam); setPage(Number(params.get('page')) || 0) }, [queryParam, params])
+  useEffect(() => { if (!query.trim()) { setState({status:'idle',data:null,error:null}); return } const controller = new AbortController(); setState(s => ({...s,status:'loading',error:null})); searchDocuments({query,page,size:PAGE_SIZE,signal:controller.signal}).then(data => setState({status:'success',data,error:null})).catch(error => { if (error.name !== 'AbortError') setState({status:'error',data:null,error}) }); return () => controller.abort() }, [query,page])
+  const submit = (event) => { event.preventDefault(); const next = input.trim(); setQuery(next); setPage(0); setParams(next ? {q:next} : {}) }
+  const changePage = (next) => { setPage(next); setParams({q:query,page:String(next)}); window.scrollTo({top:0,behavior:'smooth'}) }
+  const {status,data,error} = state
+  return <div className="search-layout"><section className="search-hero"><div><p className="eyebrow">Kính Lúp / Search</p><h1 id="search-page-title">Tìm đúng tài liệu,<br/><em>nhanh hơn.</em></h1><p className="hero-copy">Tra cứu thông báo, hướng dẫn và tài liệu công khai từ HUST.</p></div><form className="search-form" onSubmit={submit} role="search"><label htmlFor="search-input">Từ khóa tìm kiếm</label><div className="search-row"><input id="search-input" value={input} onChange={e => setInput(e.target.value)} placeholder="Ví dụ: học bổng, tuyển sinh..." autoComplete="off"/><button>Tìm kiếm ↗</button></div><small>Enter để tìm kiếm · hỗ trợ tìm kiếm không dấu</small></form></section><section className="results-panel" aria-live="polite">{!query && <div className="empty-state"><span>✦</span><h2>Bắt đầu với một từ khóa</h2><p>Nhập nội dung bạn muốn tìm để khám phá kho tài liệu HUST.</p></div>}{status === 'loading' && <div className="loading-state"><i/>Đang tìm kiếm tài liệu...</div>}{status === 'error' && <div className="message error"><strong>Không thể tải kết quả.</strong><span>{error?.message}</span><button onClick={() => setQuery(query)}>Thử lại</button></div>}{status === 'success' && data && <><header className="results-header"><div><p className="eyebrow">Search results</p><h2>Kết quả cho “{data.query}”</h2></div><span>{data.total} tài liệu</span></header>{data.results.length ? data.results.map(result => <Result key={result.id} result={result}/>) : <div className="empty-state"><span>⌕</span><h2>Không tìm thấy kết quả</h2><p>Thử một từ khóa khác hoặc kiểm tra lại chính tả.</p></div>}<Pagination page={data.page} total={data.total} onChange={changePage}/></>}</section></div>
 }

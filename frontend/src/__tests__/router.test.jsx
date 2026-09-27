@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { router } from '../app/router'
@@ -9,13 +9,15 @@ function renderAt(path) {
 }
 
 describe('application routes', () => {
-  it('renders the search placeholder at the root route', () => {
+  it('renders the search experience at the root route', () => {
     renderAt('/')
-    expect(screen.getByRole('heading', { name: /search ui đang được xây dựng/i })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: /tìm đúng tài liệu/i })).toBeTruthy()
+    expect(screen.getByRole('search')).toBeTruthy()
   })
 
-  it('renders the document detail placeholder with the route id', () => {
-    renderAt('/documents/test-id')
-    expect(screen.getByText('Document ID: test-id')).toBeTruthy()
+  it('loads the document detail route', async () => {
+    renderAt('/documents/hoc-bong-ky-1-2026')
+    expect(screen.getByText('Đang tải tài liệu...')).toBeTruthy()
+    await waitFor(() => expect(screen.getByRole('heading', { name: /thông báo học bổng/i })).toBeTruthy())
   })
 })

@@ -4,3 +4,7 @@ spring:
 
 server:
   port: ${BACKEND_PORT:8080}
+
+kinhlup:
+  lucene:
+    index-dir: ${LUCENE_INDEX_DIR:./data/lucene-index}

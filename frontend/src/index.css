@@ -26,6 +26,7 @@ a { color: inherit; }
 .search-hero em { color: #7659e8; font-style: normal; }
 .hero-copy { max-width: 410px; color: #77737f; line-height: 1.7; }
 
+.card { width: min(720px, 100%); margin: auto; padding: 32px; background: #fff; border: 1px solid #e3e1e7; border-radius: 8px; box-shadow: 0 2px 5px rgb(35 32 46 / 3%); }
 .search-form, .results-panel, .detail-card {
   background: #fff;
   border: 1px solid #e3e1e7;

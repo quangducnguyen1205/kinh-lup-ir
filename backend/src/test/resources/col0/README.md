@@ -18,14 +18,14 @@ thành các token NFC.
 trả nguyên nội dung fixture và ánh xạ chính xác query
 `sinh viên nghiên cứu khoa hoc` thành `sinh_viên nghiên_cứu khoa_hoc`.
 Mock chỉ ghép các cụm trong query, giữ nguyên `hoc` không dấu theo đề bài.
-Corpus giữ `khoa_học` theo nội dung tài liệu. `WhitespaceAnalyzer` không sửa
+Corpus giữ `khoa_học` theo nội dung tài liệu. `StandardAnalyzer` không sửa
 dấu nên `khoa_hoc` không khớp `khoa_học`; OR vẫn cho phép tài liệu khớp qua
 `sinh_viên` hoặc `nghiên_cứu`.
 Mock chỉ được tiêm vào hai lớp test qua `@MockitoBean`.
 
 Chạy `mvn clean test` tại thư mục `backend`. Test rebuild 10 tài liệu qua các
-service Lucene thật, dùng `WhitespaceAnalyzer`, `ClassicSimilarity`, OR mặc
-định của `QueryParser` và in nguyên giá trị float lấy từ `ScoreDoc.score`.
+service Lucene thật, dùng `StandardAnalyzer`, `ClassicSimilarity`, OR mặc
+giữa các token qua `QueryBuilder` và in nguyên giá trị float lấy từ `ScoreDoc.score`.
 Tập tài liệu khớp được kiểm tra từ token của fixture; score và thứ tự ranking
 không được hard-code. Index test còn rebuild hai lần để kiểm tra không trùng
 tài liệu. Các test dùng thư mục tạm riêng (`@TempDir`), không chạm index runtime.

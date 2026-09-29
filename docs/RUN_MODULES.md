@@ -1,6 +1,6 @@
 # Cách chạy các module
 
-Step 5 tạo **khung kỹ thuật chạy được** cho mọi module. Tính năng được bổ sung dần theo task; hiện crawler đã có spider HUST của T01, các module khác vẫn ở mức skeleton.
+Step 5 tạo **khung kỹ thuật chạy được** cho mọi module. Tính năng được bổ sung dần theo task; hiện crawler đã có spider HUST của T01, backend đã có luồng PostgreSQL → Lucene → API; xem README từng module cho tiến độ chi tiết.
 
 ## Yêu cầu môi trường
 
@@ -43,7 +43,7 @@ GET http://localhost:8080/api/health
 }
 ```
 
-Skeleton đã khai báo Lucene và Tika nhưng **chưa** tạo index, search hay bóc tách tài liệu.
+Backend đã có rebuild index từ DB, search phân trang và document detail. Xem `backend/README.md` để cấu hình `.env`, bật rebuild local và chạy test.
 
 ## Crawler
 

@@ -1,7 +1,7 @@
 package vn.edu.hust.kinhlup.lucene;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -36,7 +36,7 @@ public class LuceneIndexService {
     }
 
     public void clearIndex() throws IOException {
-        try (Analyzer analyzer = new WhitespaceAnalyzer();
+        try (Analyzer analyzer = new StandardAnalyzer();
              Directory directory = FSDirectory.open(indexPath);
              IndexWriter writer = new IndexWriter(directory, writerConfig(analyzer))) {
             writer.deleteAll();
@@ -50,7 +50,7 @@ public class LuceneIndexService {
 
     /** Readers see the previous commit until every source document is indexed successfully. */
     public void rebuild(List<SourceDocument> documents, TextNormalizer normalizer) throws IOException {
-        try (Analyzer analyzer = new WhitespaceAnalyzer();
+        try (Analyzer analyzer = new StandardAnalyzer();
              Directory directory = FSDirectory.open(indexPath)) {
             IndexWriter writer = new IndexWriter(directory, writerConfig(analyzer));
             try {
@@ -93,7 +93,7 @@ public class LuceneIndexService {
             String domain
     ) throws IOException {
 
-        try (Analyzer analyzer = new WhitespaceAnalyzer();
+        try (Analyzer analyzer = new StandardAnalyzer();
              Directory directory = FSDirectory.open(indexPath);
              IndexWriter writer = new IndexWriter(directory, writerConfig(analyzer))) {
 

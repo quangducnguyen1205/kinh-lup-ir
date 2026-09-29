@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { searchDocuments } from '../api/searchApi'
+import { getSafeExternalUrl } from '../utils/safeUrl'
 
 const PAGE_SIZE = 10
 
@@ -12,14 +13,18 @@ function normalizePage(value) {
 function formatDate(value) {
   if (!value) return 'Chưa cập nhật'
 
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Chưa cập nhật'
+
   return new Intl.DateTimeFormat('vi-VN', {
     dateStyle: 'medium',
-  }).format(new Date(value))
+  }).format(date)
 }
 
 function Result({ result, backTo }) {
   const title = result.title || 'Tài liệu chưa có tiêu đề'
   const snippet = result.snippet || 'Chưa có phần mô tả cho tài liệu này.'
+  const sourceUrl = getSafeExternalUrl(result.url)
 
   return (
     <article className="result-card">
@@ -41,9 +46,13 @@ function Result({ result, backTo }) {
 
       <div className="result-meta">
         <span>{formatDate(result.publishedAt)}</span>
-        <a href={result.url} target="_blank" rel="noreferrer">
-          Mở nguồn ↗
-        </a>
+        {sourceUrl ? (
+          <a href={sourceUrl} target="_blank" rel="noreferrer">
+            Mở nguồn ↗
+          </a>
+        ) : (
+          <span>URL nguồn không hợp lệ</span>
+        )}
       </div>
     </article>
   )
@@ -88,6 +97,7 @@ export function SearchPage() {
   const [input, setInput] = useState(queryParam)
   const [query, setQuery] = useState(queryParam)
   const [page, setPage] = useState(pageParam)
+  const [retryKey, setRetryKey] = useState(0)
   const [state, setState] = useState({
     status: queryParam ? 'loading' : 'idle',
     data: null,
@@ -155,7 +165,7 @@ export function SearchPage() {
       })
 
     return () => controller.abort()
-  }, [page, query])
+  }, [page, query, retryKey])
 
   function submit(event) {
     event.preventDefault()
@@ -235,7 +245,7 @@ export function SearchPage() {
           <div className="message error">
             <strong>Không thể tải kết quả.</strong>
             <span>{error?.message}</span>
-            <button type="button" onClick={() => setQuery(query)}>
+            <button type="button" onClick={() => setRetryKey((current) => current + 1)}>
               Thử lại
             </button>
           </div>

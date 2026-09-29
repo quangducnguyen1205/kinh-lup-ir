@@ -51,6 +51,35 @@ describe('SearchPage', () => {
     })
   })
 
+  it('retries a failed search request', async () => {
+    searchDocuments
+      .mockRejectedValueOnce(new Error('Tạm thời không kết nối.'))
+      .mockResolvedValueOnce({
+        query: 'hust',
+        total: 1,
+        page: 0,
+        size: 10,
+        results: [{
+          id: 'doc-1',
+          title: 'Kết quả sau khi thử lại',
+          url: 'https://hust.edu.vn/doc-1',
+          snippet: 'Đã tải lại.',
+          score: 1,
+          publishedAt: null,
+        }],
+      })
+
+    renderSearch('/?q=hust')
+    await waitFor(() => expect(screen.getByText('Tạm thời không kết nối.')).toBeTruthy())
+
+    fireEvent.click(screen.getByRole('button', { name: 'Thử lại' }))
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /kết quả sau khi thử lại/i })).toBeTruthy()
+    })
+    expect(searchDocuments).toHaveBeenCalledTimes(2)
+  })
+
   it('renders API errors without losing the search form', async () => {
     searchDocuments.mockRejectedValue(new Error('Máy chủ đang gặp sự cố.'))
     renderSearch('/?q=hust')

@@ -1,20 +1,23 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { getDocument } from '../api/searchApi'
+import { getSafeExternalUrl } from '../utils/safeUrl'
 
 function formatDate(value) {
   if (!value) return 'Chưa cập nhật'
 
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Chưa cập nhật'
+
   return new Intl.DateTimeFormat('vi-VN', {
     dateStyle: 'medium',
-  }).format(new Date(value))
+  }).format(date)
 }
 
 export function DocumentDetailPage() {
   const { id } = useParams()
   const location = useLocation()
   const backTo = location.state?.from || '/'
-
   const [state, setState] = useState({
     status: 'loading',
     document: null,
@@ -54,6 +57,7 @@ export function DocumentDetailPage() {
   }, [id])
 
   const { status, document, error } = state
+  const sourceUrl = document ? getSafeExternalUrl(document.url) : null
 
   if (status === 'loading') {
     return (
@@ -108,14 +112,18 @@ export function DocumentDetailPage() {
           )}
         </div>
 
-        <a
-          className="source-link"
-          href={document.url}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Mở tài liệu gốc ↗
-        </a>
+        {sourceUrl ? (
+          <a
+            className="source-link"
+            href={sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Mở tài liệu gốc ↗
+          </a>
+        ) : (
+          <span className="source-link">URL nguồn không hợp lệ</span>
+        )}
       </article>
     </div>
   )

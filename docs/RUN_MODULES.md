@@ -43,7 +43,7 @@ GET http://localhost:8080/api/health
 }
 ```
 
-Backend đã có rebuild index từ DB, search phân trang và document detail. Xem `backend/README.md` để cấu hình `.env`, bật rebuild local và chạy test.
+Backend đã có rebuild index từ DB, search phân trang, document detail và service Tika cho PDF/DOCX/PPTX. Xem `backend/README.md` để cấu hình `.env`, bật rebuild local và chạy test.
 
 ## Crawler
 

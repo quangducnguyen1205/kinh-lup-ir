@@ -16,6 +16,48 @@ Hiện có:
 - TF-IDF (`ClassicSimilarity`), OR giữa các từ, tìm cả title và content (title boost 2).
 - Document/query dùng cùng `StandardAnalyzer` (lowercase và tách dấu câu, giữ token có underscore). `TextNormalizer` vẫn là điểm tích hợp T06/T07; mặc định chưa tách từ tiếng Việt.
 
+## Tiến độ T05
+
+Trước khi hoàn thiện: mới có dependency `tika-core`, chưa có parser/service.
+Hiện có `TikaExtractionService` dùng Apache Tika 4 tự nhận dạng **PDF, DOCX, PPTX**
+và trả `ExtractedDocument(text, contentType, title, metadata)`. Metadata giữ mọi
+giá trị của mỗi key dưới dạng `Map<String, List<String>>`, phù hợp JSONB; kết quả
+là immutable và text chưa qua NLP. Không có title thì `title = null`.
+
+Gọi từ một service khác bằng constructor injection `TikaExtractionService`:
+
+```java
+ExtractedDocument result = extractionService.extract(Path.of("hust.pdf"));
+String rawText = result.text();
+String contentType = result.contentType();
+String title = result.title();
+Map<String, List<String>> metadata = result.metadata();
+```
+
+Có overload `extract(InputStream input, String fileName)` cho dữ liệu tải bởi crawler.
+Caller đóng stream của mình; overload Path tự đóng file. Service không tự tải URL
+hoặc ghi DB. Khi tích hợp ingestion, ánh xạ text → `raw_text`, title → `title`,
+contentType → `content_type`, metadata → `metadata`, rồi dùng pipeline cập nhật/hash
+của crawler và rebuild T04. Test `ExtractionSearchTest` kiểm tra text sau Tika có
+thể đưa vào Lucene và tìm lại với tiêu đề/URL gốc cho cả ba định dạng.
+
+Cấu hình mặc định:
+
+```dotenv
+EXTRACTION_MAX_BYTES=20971520
+EXTRACTION_MAX_CHARACTERS=2000000
+```
+
+File vượt 20 MiB hoặc text vượt 2 triệu ký tự báo lỗi, không trả kết quả bị cắt ngầm.
+`ExtractionException.reason()` phân biệt `EMPTY_INPUT`, `FILE_TOO_LARGE`,
+`TEXT_TOO_LARGE`, `UNSUPPORTED_TYPE`, `PARSE_FAILED` (bao gồm PDF hỏng/có mật khẩu).
+Lỗi I/O khi mở file/đọc stream vẫn là `IOException`.
+
+Baseline lấy lớp text của PDF, chưa OCR PDF scan; không bóc tách file đính kèm bên
+trong. Không cần cài Tesseract hay Office. Các parser PDF/Microsoft được khai báo
+riêng; thêm định dạng khác bằng parser dependency + MIME vào danh sách hỗ trợ và
+test fixture tương ứng. Service không mở thêm endpoint upload ngoài API CONTRACT.
+
 ## Chạy backend
 
 Yêu cầu Java 21, Maven 3.9+. Từ thư mục `backend`:
@@ -79,6 +121,7 @@ mvn clean test
 - Corpus 10 tài liệu: kiểm tra TF-IDF thật, OR, score giảm dần và ID không trùng; mock chỉ `TextNormalizer`.
 - Repository/rebuild: H2 chế độ PostgreSQL, dữ liệu nullable, lọc trạng thái, rebuild rỗng, rollback khi lỗi, update cùng ID và crawler thay đổi đồng thời.
 - API: Spring context + MockMvc + Lucene thật; kiểm tra JSON contract, tìm title, phân trang, lỗi đầu vào, CORS, reindex và lỗi DB.
+- Tika: file PDF/DOCX/PPTX thật tạo bằng PDFBox/POI; kiểm tra Unicode, metadata, giới hạn, PDF hỏng/mật khẩu, stream ownership, gọi đồng thời và luồng extraction → search.
 - Tất cả index test nằm trong `@TempDir`, không đụng index runtime.
 
 Smoke test PostgreSQL thật (cần `.env`/biến môi trường và dữ liệu crawler):

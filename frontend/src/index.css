@@ -107,6 +107,8 @@ a { color: inherit; }
 :root[data-theme="dark"] .app-header__context, :root[data-theme="dark"] .eyebrow, :root[data-theme="dark"] small, :root[data-theme="dark"] .result-top, :root[data-theme="dark"] .result-meta { color: #8c899b; }
 :root[data-theme="dark"] .theme-toggle { color: #c8c4d4; background: #1b1923; border-color: #3b374b; }
 :root[data-theme="dark"] .theme-toggle:hover { color: #c0b6ff; border-color: #8d7af3; }
+:root[data-theme="dark"] .pagination button { color: #17131f; background: #a99aff; border-color: #a99aff; }
+:root[data-theme="dark"] .pagination button:not(:disabled):hover { color: #17131f; background: #c0b6ff; border-color: #c0b6ff; }
 :root[data-theme="dark"] .hero-copy { color: #a5a1b1; }
 :root[data-theme="dark"] .search-form, :root[data-theme="dark"] .results-panel, :root[data-theme="dark"] .detail-card, :root[data-theme="dark"] .card { background: #19181f; border-color: #2b2935; box-shadow: none; }
 :root[data-theme="dark"] .search-form label { color: #c8c4d4; }

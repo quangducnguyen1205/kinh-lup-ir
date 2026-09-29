@@ -30,6 +30,27 @@ describe('SearchPage', () => {
     expect(screen.getByText('Chưa cập nhật')).toBeTruthy()
   })
 
+  it('clamps an out-of-range page to the last available page', async () => {
+    searchDocuments.mockResolvedValue({
+      query: 'hust',
+      total: 21,
+      page: 100,
+      size: 10,
+      results: [],
+    })
+
+    renderSearch('/?q=hust&page=100')
+
+    await waitFor(() => {
+      expect(searchDocuments).toHaveBeenCalledWith(
+        expect.objectContaining({ query: 'hust', page: 100, size: 10 }),
+      )
+      expect(searchDocuments).toHaveBeenCalledWith(
+        expect.objectContaining({ query: 'hust', page: 2, size: 10 }),
+      )
+    })
+  })
+
   it('renders API errors without losing the search form', async () => {
     searchDocuments.mockRejectedValue(new Error('Máy chủ đang gặp sự cố.'))
     renderSearch('/?q=hust')
@@ -43,6 +64,6 @@ describe('DocumentDetailPage', () => {
     getDocument.mockRejectedValue(Object.assign(new Error('Không tìm thấy tài liệu.'), { status: 404 }))
     render(<MemoryRouter initialEntries={['/documents/missing']}><Routes><Route path="/documents/:id" element={<DocumentDetailPage />} /></Routes></MemoryRouter>)
     await waitFor(() => expect(screen.getByText('Không tìm thấy tài liệu.')).toBeTruthy())
-    expect(screen.getByRole('link', { name: /về trang tìm kiếm/i })).toBeTruthy()
+    expect(screen.getByRole('link', { name: /về kết quả tìm kiếm/i })).toBeTruthy()
   })
 })

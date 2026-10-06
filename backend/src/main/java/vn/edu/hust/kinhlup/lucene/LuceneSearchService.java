@@ -5,6 +5,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
+import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.QueryBuilder;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class LuceneSearchService {
@@ -30,6 +32,12 @@ public class LuceneSearchService {
     }
 
     public SearchPage search(String inputQuery, int page, int size) throws IOException {
+        return search(inputQuery, page, size, new ClassicSimilarity());
+    }
+
+    /** Select a scoring model per search, so experiments do not change the API default. */
+    public SearchPage search(String inputQuery, int page, int size, Similarity similarity) throws IOException {
+        Objects.requireNonNull(similarity, "similarity");
         if (inputQuery == null || inputQuery.length() > 1000) {
             throw new IllegalArgumentException("q must contain at most 1000 characters");
         }
@@ -52,7 +60,7 @@ public class LuceneSearchService {
             Query query = queryBuilder.build();
             try (DirectoryReader reader = DirectoryReader.open(directory)) {
                 IndexSearcher searcher = new IndexSearcher(reader);
-                searcher.setSimilarity(new ClassicSimilarity());
+                searcher.setSimilarity(similarity);
                 long total = searcher.count(query);
                 int offset = page * size;
                 if (offset >= total) return new SearchPage(inputQuery, total, page, size, List.of());

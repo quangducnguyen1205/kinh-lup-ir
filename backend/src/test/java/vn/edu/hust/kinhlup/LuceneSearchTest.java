@@ -1,9 +1,14 @@
 package vn.edu.hust.kinhlup;
 
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
+import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -23,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -62,12 +68,25 @@ class LuceneSearchTest {
         }
     }
 
-    @Test
-    void searchRawQueryWithMockPreprocessingAndRealTfIdf() throws Exception {
-        List<SearchResult> results = searchService.search(LuceneTestCorpus.RAW_QUERY);
-        verify(textNormalizer).normalize(LuceneTestCorpus.RAW_QUERY);
-        String normalizedQuery = textNormalizer.normalize(LuceneTestCorpus.RAW_QUERY);
-        assertEquals("sinh_viên nghiên_cứu khoa_hoc", normalizedQuery);
+    static Stream<Arguments> queriesAndScoringModels() {
+        return Stream.of(
+                new String[]{LuceneTestCorpus.RAW_QUERY, LuceneTestCorpus.NORMALIZED_QUERY},
+                new String[]{LuceneTestCorpus.COOPERATION_RAW_QUERY, LuceneTestCorpus.COOPERATION_NORMALIZED_QUERY}
+        ).flatMap(query -> Stream.of(
+                Arguments.of(query[0], query[1], "TF-IDF", new ClassicSimilarity()),
+                Arguments.of(query[0], query[1], "BM25 (k1=1.2, b=0.75)", new BM25Similarity(1.2f, 0.75f))
+        ));
+    }
+
+    @ParameterizedTest(name = "{2} | Truy vấn: {0}")
+    @MethodSource("queriesAndScoringModels")
+    void searchRawQueryWithMockPreprocessingAndRealScoring(
+            String rawQuery, String expectedNormalizedQuery, String scoringModel, Similarity similarity)
+            throws Exception {
+        List<SearchResult> results = searchService.search(rawQuery, 0, 10, similarity).results();
+        verify(textNormalizer).normalize(rawQuery);
+        String normalizedQuery = textNormalizer.normalize(rawQuery);
+        assertEquals(expectedNormalizedQuery, normalizedQuery);
 
         // OR semantics: derive membership from fixture tokens, never expected scores or order.
         Set<String> expectedMatches = new HashSet<>();
@@ -86,8 +105,9 @@ class LuceneSearchTest {
         assertEquals(expectedMatches,
                 results.stream().map(SearchResult::docId).collect(Collectors.toSet()));
 
+        System.out.println("\nSCORING MODEL: " + scoringModel);
         System.out.println("RAW QUERY:");
-        System.out.println(LuceneTestCorpus.RAW_QUERY);
+        System.out.println(rawQuery);
         System.out.println("\nMOCK NORMALIZED QUERY:");
         System.out.println(normalizedQuery);
         System.out.println("\nRESULT:");

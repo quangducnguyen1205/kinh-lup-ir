@@ -118,7 +118,7 @@ và không trả thông tin kết nối cho client.
 mvn clean test
 ```
 
-- Corpus 10 tài liệu: kiểm tra TF-IDF thật, OR, score giảm dần và ID không trùng; mock chỉ `TextNormalizer`.
+- Corpus 10 tài liệu: chạy cả hai truy vấn mẫu với TF-IDF và BM25 (`k1=1.2`, `b=0.75`), in score/ranking thật; kiểm tra OR, score giảm dần và ID không trùng; mock chỉ `TextNormalizer`. API vẫn mặc định TF-IDF.
 - Repository/rebuild: H2 chế độ PostgreSQL, dữ liệu nullable, lọc trạng thái, rebuild rỗng, rollback khi lỗi, update cùng ID và crawler thay đổi đồng thời.
 - API: Spring context + MockMvc + Lucene thật; kiểm tra JSON contract, tìm title, phân trang, lỗi đầu vào, CORS, reindex và lỗi DB.
 - Tika: file PDF/DOCX/PPTX thật tạo bằng PDFBox/POI; kiểm tra Unicode, metadata, giới hạn, PDF hỏng/mật khẩu, stream ownership, gọi đồng thời và luồng extraction → search.

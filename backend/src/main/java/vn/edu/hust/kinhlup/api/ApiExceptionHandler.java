@@ -9,15 +9,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.io.IOException;
 
+/** Chuyển các lỗi do service phát sinh thành response HTTP phù hợp. */
 @RestControllerAdvice
 public class ApiExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
+    /** Tham số không hợp lệ, ví dụ page âm hoặc size vượt giới hạn, trả HTTP 400. */
     @ExceptionHandler(IllegalArgumentException.class)
     public ProblemDetail badRequest(IllegalArgumentException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    /** Lỗi lưu trữ/index/DB trả HTTP 503; không đưa chi tiết kết nối nội bộ vào response. */
     @ExceptionHandler({IOException.class, DataAccessException.class})
     public ProblemDetail unavailable(Exception exception) {
         LOG.error("Backend storage operation failed ({})", exception.getClass().getSimpleName());

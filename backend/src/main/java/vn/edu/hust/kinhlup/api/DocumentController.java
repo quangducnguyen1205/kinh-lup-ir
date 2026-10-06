@@ -7,6 +7,7 @@ import vn.edu.hust.kinhlup.document.DocumentRepository;
 import java.time.Instant;
 import java.util.UUID;
 
+/** API chi tiết lấy dữ liệu gốc từ PostgreSQL, có thể mới hơn bản đang nằm trong index. */
 @RestController
 @RequestMapping("/api/documents")
 public class DocumentController {
@@ -14,6 +15,7 @@ public class DocumentController {
 
     public DocumentController(DocumentRepository documents) { this.documents = documents; }
 
+    /** Tìm theo UUID; không có tài liệu ACTIVE thì trả 404, ID sai định dạng được Spring trả 400. */
     @GetMapping("/{id}")
     public DocumentDetail detail(@PathVariable UUID id) {
         var document = documents.findActiveById(id)
@@ -22,6 +24,7 @@ public class DocumentController {
                 document.rawText(), document.publishedAt(), document.lastCrawledAt());
     }
 
+    /** Các tên thuộc tính được giữ đúng API contract để frontend đọc JSON. */
     public record DocumentDetail(UUID id, String url, String title, String contentType,
                                  String text, Instant publishedAt, Instant lastCrawledAt) { }
 }

@@ -31,6 +31,7 @@ import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/** Kiểm tra API qua MockMvc với Lucene thật; repository được mock để không ghi DB chung. */
 @SpringBootTest(properties = {"kinhlup.admin.reindex-enabled=true", "spring.config.import="})
 class ApiContractTest {
     @TempDir static Path indexDirectory;
@@ -45,6 +46,7 @@ class ApiContractTest {
     List<SourceDocument> corpus;
     static final Instant DATE = Instant.parse("2026-09-20T08:00:00Z");
 
+    /** Tạo 23 tài liệu để kiểm tra trang đầu, trang cuối và trang vượt phạm vi. */
     @BeforeEach
     void setup() throws Exception {
         mvc = MockMvcBuilders.webAppContextSetup(context).build();
@@ -57,6 +59,7 @@ class ApiContractTest {
         reindex.rebuild();
     }
 
+    /** Kiểm tra tên/số lượng field JSON, tham số mặc định, ngày đăng và snippet từ nội dung gốc. */
     @Test
     void searchReturnsExactContractDefaultsAndRawSnippet() throws Exception {
         mvc.perform(get("/api/search").param("q", "TUYỂN SINH,"))
@@ -76,6 +79,7 @@ class ApiContractTest {
                 .andExpect(jsonPath("$.results[0].publishedAt").value(DATE.toString()));
     }
 
+    /** Trang cuối có 3 tài liệu; trang vượt phạm vi rỗng nhưng total vẫn là 23. */
     @Test
     void paginationIncludesLastPageAndOutOfRangePageWithoutLosingTotal() throws Exception {
         mvc.perform(get("/api/search").param("q", "hust").param("page", "2"))
@@ -89,6 +93,7 @@ class ApiContractTest {
                 .andExpect(jsonPath("$.results", empty()));
     }
 
+    /** Phân biệt query rỗng/thiếu và bảo đảm ký hiệu Lucene không được thực thi như cú pháp. */
     @Test
     void emptyMissingAndLiteralQueriesAreHandled() throws Exception {
         for (String query : List.of("", "   ", "no-such-token", "*:*", "\"[")) {
@@ -100,6 +105,7 @@ class ApiContractTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.total").value(0));
     }
 
+    /** Tham số phân trang sai hoặc query dài quá giới hạn phải trả HTTP 400. */
     @Test
     void invalidPaginationAndOversizedQueriesReturn400() throws Exception {
         for (String page : List.of("-1", "2147483647", "not-a-number")) {
@@ -113,6 +119,7 @@ class ApiContractTest {
         mvc.perform(get("/api/search").param("q", "x".repeat(1001))).andExpect(status().isBadRequest());
     }
 
+    /** Detail trả đúng dữ liệu nguồn/contract; ID không tồn tại hoặc sai định dạng trả lỗi phù hợp. */
     @Test
     void detailReadsSourceAndReturnsOnlyContractFields() throws Exception {
         mvc.perform(get("/api/documents/" + corpus.getFirst().id()))
@@ -128,6 +135,7 @@ class ApiContractTest {
         mvc.perform(get("/api/documents/invalid-id")).andExpect(status().isBadRequest());
     }
 
+    /** API admin đã được bật trong test phải rebuild và gọi bước ghi nhận trạng thái DB. */
     @Test
     void optInReindexEndpointRebuildsAndAcknowledgesDatabase() throws Exception {
         mvc.perform(post("/api/admin/reindex")).andExpect(status().isOk())
@@ -136,16 +144,18 @@ class ApiContractTest {
         verify(documents, times(2)).markIndexed(corpus);
     }
 
+    /** DB lỗi trả 503, không lộ thông tin kết nối và không phá bản index đã commit. */
     @Test
     void databaseFailureReturns503WithoutInternalDetails() throws Exception {
         when(documents.findActive()).thenThrow(new DataAccessResourceFailureException("private connection details"));
         mvc.perform(post("/api/admin/reindex")).andExpect(status().isServiceUnavailable())
                 .andExpect(content().string(not(containsString("private connection details"))));
-        // A failed DB read must leave the previously committed index usable.
+        // Đọc DB thất bại không được làm mất khả năng tìm trên bản index trước đó.
         mvc.perform(get("/api/search").param("q", "hust"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.total").value(23));
     }
 
+    /** Trình duyệt chỉ được gọi các API đọc từ origin cấu hình; admin không mở CORS. */
     @Test
     void frontendOriginCanReadSearchButCannotReindexViaCors() throws Exception {
         mvc.perform(get("/api/search").param("q", "hust").header("Origin", "http://localhost:5173"))

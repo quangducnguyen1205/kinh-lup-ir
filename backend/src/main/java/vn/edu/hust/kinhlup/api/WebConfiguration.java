@@ -13,6 +13,10 @@ public class WebConfiguration implements WebMvcConfigurer {
         this.origins = origins;
     }
 
+    /**
+     * Cho frontend ở origin được cấu hình gọi GET search/detail từ trình duyệt.
+     * CORS không thay thế xác thực; API admin không được mở CORS tại đây.
+     */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/search").allowedOrigins(origins).allowedMethods("GET");

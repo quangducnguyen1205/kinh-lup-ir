@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class HealthController {
 
+    /** Kiểm tra ứng dụng trả lời HTTP; không kiểm tra kết nối DB hoặc tình trạng index. */
     @GetMapping("/health")
     public Map<String, String> health() {
         return Map.of(

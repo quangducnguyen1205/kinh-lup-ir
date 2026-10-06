@@ -35,12 +35,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
+/** So sánh 2 query × 2 thuật toán trên corpus cố định, kiểm tra tập tài liệu và score hợp lệ. */
 @SpringBootTest
 class LuceneSearchTest {
 
     @TempDir
     static Path temporaryIndex;
 
+    /** Chuyển index sang thư mục tạm, tránh chạm index đang dùng của ứng dụng. */
     @DynamicPropertySource
     static void indexProperties(DynamicPropertyRegistry registry) {
         registry.add("kinhlup.lucene.index-dir", temporaryIndex::toString);
@@ -55,9 +57,11 @@ class LuceneSearchTest {
     @Autowired
     private LuceneSearchService searchService;
 
+    // Thay bean tiền xử lý thật bằng mock, không thay service Lucene hay thuật toán chấm điểm.
     @MockitoBean
     private TextNormalizer textNormalizer;
 
+    /** Mỗi trường hợp bắt đầu với cùng 10 tài liệu để so sánh công bằng. */
     @BeforeEach
     void rebuildCorpus() throws Exception {
         LuceneTestCorpus.stubPreprocessing(textNormalizer);
@@ -68,6 +72,7 @@ class LuceneSearchTest {
         }
     }
 
+    /** Tạo 4 bộ tham số: mỗi query chạy TF-IDF và BM25 với k1=1.2, b=0.75. */
     static Stream<Arguments> queriesAndScoringModels() {
         return Stream.of(
                 new String[]{LuceneTestCorpus.RAW_QUERY, LuceneTestCorpus.NORMALIZED_QUERY},
@@ -78,6 +83,7 @@ class LuceneSearchTest {
         ));
     }
 
+    /** Gọi search thật, kiểm tra mock được sử dụng, rồi đối chiếu tập tài liệu khớp và in ranking. */
     @ParameterizedTest(name = "{2} | Truy vấn: {0}")
     @MethodSource("queriesAndScoringModels")
     void searchRawQueryWithMockPreprocessingAndRealScoring(
@@ -88,7 +94,7 @@ class LuceneSearchTest {
         String normalizedQuery = textNormalizer.normalize(rawQuery);
         assertEquals(expectedNormalizedQuery, normalizedQuery);
 
-        // OR semantics: derive membership from fixture tokens, never expected scores or order.
+        // Tự xác định tài liệu khớp OR từ token của fixture; không gán sẵn điểm hoặc thứ hạng.
         Set<String> expectedMatches = new HashSet<>();
         Set<String> queryTokens = Set.of(normalizedQuery.split(" "));
         boolean hasPartialMatch = false;
@@ -114,6 +120,7 @@ class LuceneSearchTest {
         printAndCheckResults(results);
     }
 
+    /** Kiểm tra ID không trùng, score dương/hữu hạn/giảm dần rồi in kết quả thực tế. */
     private void printAndCheckResults(List<SearchResult> results) {
         assertFalse(results.isEmpty());
         assertTrue(results.size() <= 10);
@@ -124,7 +131,7 @@ class LuceneSearchTest {
             assertTrue(Float.isFinite(result.score()) && result.score() > 0);
             assertTrue(result.score() <= previousScore);
             previousScore = result.score();
-            // Preserve the actual float score's precision rather than rounding to six decimals.
+            // In nguyên giá trị float Lucene trả về để không làm mất độ chính xác do làm tròn.
             System.out.println(result.docId() + " : " + result.score());
         }
         System.out.println("\nRANKING:");

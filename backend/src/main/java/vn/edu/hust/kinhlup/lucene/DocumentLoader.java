@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/** Nạp file văn bản vào Lucene cho corpus test/demo; luồng database dùng ReindexService. */
 @Component
 public class DocumentLoader {
 
@@ -21,6 +22,7 @@ public class DocumentLoader {
         this.luceneIndexService = luceneIndexService;
     }
 
+    /** Đọc file → tiền xử lý nội dung → ghi tài liệu với ID do caller cung cấp. */
     public void loadDocument(
             String docId,
             Path filePath
@@ -31,6 +33,7 @@ public class DocumentLoader {
         String normalizedText =
                 textNormalizer.normalize(rawText);
 
+        // File corpus không có metadata riêng: title và URL để rỗng, domain dùng giá trị mẫu.
         luceneIndexService.indexDocument(
                 docId,
                 "",

@@ -21,12 +21,14 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/** Kiểm tra việc ghi index thật: thay tài liệu cùng ID và rebuild corpus không tạo bản trùng. */
 @SpringBootTest
 class LuceneIndexTest {
 
     @TempDir
     static Path temporaryIndex;
 
+    /** Test ghi vào thư mục tạm riêng thay vì index runtime của ứng dụng. */
     @DynamicPropertySource
     static void indexProperties(DynamicPropertyRegistry registry) {
         registry.add("kinhlup.lucene.index-dir", temporaryIndex::toString);
@@ -41,6 +43,7 @@ class LuceneIndexTest {
     @MockitoBean
     private TextNormalizer textNormalizer;
 
+    /** Ghi hai lần cùng ID phải chỉ còn một tài liệu chứa nội dung mới. */
     @Test
     void indexingSameIdReplacesContent() throws Exception {
         indexService.clearIndex();
@@ -57,10 +60,11 @@ class LuceneIndexTest {
         }
     }
 
+    /** Rebuild nhiều lần vẫn đủ 10 ID, đọc lại được nội dung và metadata đã lưu. */
     @Test
     void indexTenDocumentsWithoutDuplicatesOnRebuild() throws Exception {
         LuceneTestCorpus.stubPreprocessing(textNormalizer);
-        // Rebuild twice to verify that repeated runs do not accumulate documents.
+        // Dựng lại hai lần để chứng minh số tài liệu không tăng do ghi trùng.
         LuceneTestCorpus.rebuild(indexService, documentLoader);
         LuceneTestCorpus.rebuild(indexService, documentLoader);
 

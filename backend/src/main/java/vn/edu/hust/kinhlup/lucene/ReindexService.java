@@ -6,6 +6,7 @@ import vn.edu.hust.kinhlup.text.TextNormalizer;
 
 import java.io.IOException;
 
+/** Điều phối PostgreSQL → Lucene → ghi nhận trạng thái index trong DB. */
 @Service
 public class ReindexService {
     private final DocumentRepository documents;
@@ -18,10 +19,15 @@ public class ReindexService {
         this.normalizer = normalizer;
     }
 
+    /**
+     * Dựng lại index và trả số tài liệu của lần đọc DB này.
+     * synchronized ngăn hai lần rebuild chạy đồng thời trên cùng đối tượng service.
+     */
     public synchronized int rebuild() throws IOException {
         var snapshot = documents.findActive();
         index.rebuild(snapshot, normalizer);
-        // Only acknowledge after the Lucene commit has succeeded.
+        // Chỉ đánh dấu INDEXED sau khi commit Lucene thành công.
+        // Nếu bước cập nhật DB lỗi, index đã commit vẫn tồn tại; đây không phải giao dịch chung DB/Lucene.
         documents.markIndexed(snapshot);
         return snapshot.size();
     }

@@ -32,6 +32,12 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/VnCoreNLP-1.2.jar</systemPath>
     </dependency>
+    <!-- VnCoreNLP-1.2.jar đã được bỏ log4j/slf4j đóng gói sẵn (xung đột với Logback của
+         Spring Boot); WordSegmenter vẫn gọi API log4j nên chuyển nó sang SLF4J. -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
